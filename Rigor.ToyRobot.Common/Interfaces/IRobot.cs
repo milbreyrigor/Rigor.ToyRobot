@@ -1,0 +1,21 @@
+﻿using Rigor.ToyRobot.Common.Data;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Rigor.ToyRobot.Common.Interfaces
+{
+    public interface IRobot
+    {
+        MatPosition CurrentPosition { get; }
+
+        IList<IMoveStrategy> MoveStrategies { get; }
+
+        void SetPosition(MatPosition position);
+
+        void Move();
+    }
+}
