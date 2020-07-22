@@ -45,11 +45,16 @@
     <Compile Include="Components\Robot.cs" />
     <Compile Include="Components\SquareCardMat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Strategies\EastRotateStrategy.cs" />
     <Compile Include="Strategies\MoveRightStrategy.cs" />
     <Compile Include="Strategies\MoveDownStrategy.cs" />
     <Compile Include="Strategies\MoveLeftStrategy.cs" />
+    <Compile Include="Strategies\RotateStrategyFactory.cs" />
     <Compile Include="Strategies\MoveStrategyFactory.cs" />
     <Compile Include="Strategies\MoveUpStrategy.cs" />
+    <Compile Include="Strategies\NorthRotateStrategy.cs" />
+    <Compile Include="Strategies\SouthRotateStrategy.cs" />
+    <Compile Include="Strategies\WestRotateStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rigor.ToyRobot.Common\Rigor.ToyRobot.Common.csproj">

@@ -53,6 +53,7 @@
     <Compile Include="Interfaces\IMat.cs" />
     <Compile Include="Interfaces\IMoveStrategy.cs" />
     <Compile Include="Interfaces\IRobot.cs" />
+    <Compile Include="Interfaces\IRotateStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

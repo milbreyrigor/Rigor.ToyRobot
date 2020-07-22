@@ -11,26 +11,27 @@ using System.Threading.Tasks;
 
 namespace Rigor.ToyRobot.Challenge.Strategies
 {
-    public static class MoveStrategyFactory
+    public static class RotateStrategyFactory
     {
-        public static IMoveStrategy CreateMoveStrategy(Direction direction)
+        public static IRotateStrategy CreateRotateStrategy(Direction direction)
         {
-            IMoveStrategy strategy = GetMoveStrategies().FirstOrDefault(x => x.Direction.Equals(direction)); 
+            IRotateStrategy strategy = GetRotateStrategies().FirstOrDefault(x => x.Direction.Equals(direction)); 
             return strategy;
         } 
 
-        public static List<IMoveStrategy> GetMoveStrategies()
+        public static List<IRotateStrategy> GetRotateStrategies()
         {
-            List<IMoveStrategy> result = new List<IMoveStrategy>();
+            List<IRotateStrategy> result = new List<IRotateStrategy>();
 
             try
             {
-                var type = typeof(IMoveStrategy);
-                foreach (IMoveStrategy strategy in Assembly.GetExecutingAssembly().GetTypes().Where(c => type.IsAssignableFrom(c)).Select(c => Activator.CreateInstance(c)))
+                var type = typeof(IRotateStrategy);
+                foreach (IRotateStrategy strategy in Assembly.GetExecutingAssembly().GetTypes().Where(c => type.IsAssignableFrom(c)).Select(c => Activator.CreateInstance(c)))
                 {
                     result.Add(strategy);
                 }
             }
+
             catch (Exception e)
             {
 

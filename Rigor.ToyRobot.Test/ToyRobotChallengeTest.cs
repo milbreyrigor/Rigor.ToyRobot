@@ -43,6 +43,34 @@ namespace Rigor.ToyRobot.Test
         }
 
         [Theory]
+        [InlineData(1, 1, 0,2)]
+        [InlineData(1, 1, 1,3)]
+        [InlineData(1, 1, 2,1)]
+        [InlineData(1, 1, 3,0)]
+        public void TestPlaceRotateLeft(uint x, uint y, int directionValue, int newDirectionValue)
+        {
+            this.Given(s => s.ChallengeIsInitialized())
+                .When(s => s.SetRobotAt(new MatPosition(new MatLocation(x, y), directionValue)))
+                .When(s => s.RobotLeft())
+                .Then(s => s.ReportResultsTo(x, y, Directions.GetAll().Where(d => d.Value == newDirectionValue).FirstOrDefault()))
+                .BDDfy();
+        }
+
+        [Theory]
+        [InlineData(1, 1, 0, 3)]
+        [InlineData(1, 1, 1, 2)]
+        [InlineData(1, 1, 2, 0)]
+        [InlineData(1, 1, 3, 1)]
+        public void TestPlaceRotateRight(uint x, uint y, int directionValue, int newDirectionValue)
+        {
+            this.Given(s => s.ChallengeIsInitialized())
+                .When(s => s.SetRobotAt(new MatPosition(new MatLocation(x, y), directionValue)))
+                .When(s => s.RobotRight())
+                .Then(s => s.ReportResultsTo(x, y, Directions.GetAll().Where(d => d.Value == newDirectionValue).FirstOrDefault()))
+                .BDDfy();
+        }
+
+        [Theory]
         [InlineData(0, 0, 3, 1, 0)]
         [InlineData(0, 0, 0, 0, 1)]
         [InlineData(4, 4, 2, 3, 4)]
@@ -84,6 +112,16 @@ namespace Rigor.ToyRobot.Test
         private void RobotMoves()
         {
             _challenge.ActiveRobot.Move();
+        }
+
+        private void RobotLeft()
+        {
+            _challenge.ActiveRobot.Left();
+        }
+
+        private void RobotRight()
+        {
+            _challenge.ActiveRobot.Right();
         }
 
         private void ReportResultsTo(uint x, uint y, Direction facing)
