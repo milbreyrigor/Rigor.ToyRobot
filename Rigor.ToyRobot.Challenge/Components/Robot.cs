@@ -18,7 +18,7 @@ namespace Rigor.ToyRobot.Challenge.Components
         private List<IRotateStrategy> rotateStrategies;
         private Guid guid;
         private string name;
-        private readonly IMat mat;
+        private IMat mat;
 
         public MatPosition CurrentPosition
         {
@@ -63,15 +63,22 @@ namespace Rigor.ToyRobot.Challenge.Components
             }
         }
 
-        public Robot(IMat mat, string name, Guid guid)
+        public Robot(string name, Guid guid)
         {
             moveStrategies = MoveStrategyFactory.GetMoveStrategies();
             rotateStrategies = RotateStrategyFactory.GetRotateStrategies();
 
             this.name = name;
             this.guid = guid;
-            this.mat = mat;
             this.currentPosition = new MatPosition();
+        }
+
+        public void SetMat(IMat mat)
+        {
+            if (mat != null)
+            {
+                this.mat = mat;
+            }
         }
 
         public void SetPosition(MatPosition position)
@@ -110,6 +117,11 @@ namespace Rigor.ToyRobot.Challenge.Components
             {
                 strategy.Execute(this, anticlockwise);
             }
+        }
+
+        public string Report()
+        {
+            return $"{CurrentPosition.Location.X},{CurrentPosition.Location.Y} {CurrentPosition.Direction.Name}";
         }
     }
 }

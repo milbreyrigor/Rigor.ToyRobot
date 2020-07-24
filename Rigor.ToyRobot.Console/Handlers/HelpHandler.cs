@@ -51,10 +51,10 @@ namespace Rigor.ToyRobot.Console.Handlers
             {
                 var res = "Provides more information about available commands.\n";
 
-                var options = "[/" + SHOW_COMMAND_HELP_SWITCH + "]\t\tProvide information only about this command. (optional)\n";
+                var options = $"[/{SHOW_COMMAND_HELP_SWITCH}]\t\tProvide information only about this command. (optional)\n";
 
                 options += "----\n";
-                options += "Example: -GetHelp /N -RunByConfiguration";
+                options += $"Example: -GetHelp /{SHOW_COMMAND_HELP_SWITCH} -RunByConfiguration";
 
                 return res + options;
             }

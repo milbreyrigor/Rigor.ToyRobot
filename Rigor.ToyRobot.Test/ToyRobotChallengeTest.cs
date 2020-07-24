@@ -1,6 +1,8 @@
 ﻿
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using Newtonsoft.Json;
+
 using Rigor.ToyRobot.Challenge.Challenges;
 using Rigor.ToyRobot.Challenge.Components;
 using Rigor.ToyRobot.Common.Common;
@@ -103,10 +105,12 @@ namespace Rigor.ToyRobot.Test
             _challenge = new SquareCardMatChallenge();
             List<IRobot> robots = new List<IRobot>()
             {
-                new Robot(_challenge.Mat, "TestRobot", new Guid("{44684A66-7BF3-4F6B-969D-BC0F40CAEC10}"))
+                new Robot("TestRobot", new Guid("{44684A66-7BF3-4F6B-969D-BC0F40CAEC10}"))
             };
 
-            _challenge.Initialize(robots);
+            SquareMatConfiguration squareMat = new SquareMatConfiguration();
+            squareMat.Width = 5;
+            _challenge.Initialize(robots, JsonConvert.SerializeObject(squareMat));
         }
 
         private void RobotMoves()

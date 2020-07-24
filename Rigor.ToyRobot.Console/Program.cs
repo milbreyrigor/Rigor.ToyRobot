@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 
+using Rigor.ToyRobot.Common.Common;
 using Rigor.ToyRobot.Common.Data;
 using Rigor.ToyRobot.Console.EventArgs;
 using Rigor.ToyRobot.Console.Handlers;
@@ -7,6 +8,7 @@ using Rigor.ToyRobot.Console.Handlers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -22,15 +24,6 @@ namespace Rigor.ToyRobot.Console
         {
             try
             {
-
-                //ChallengeConfiguration config = new ChallengeConfiguration();
-                //config.ChallengeGuid = new Guid("{62DC51E0-50FD-43E4-A8D0-1A736F64FD12}");
-                //SquareMatConfiguration squareMat = new SquareMatConfiguration();
-                //squareMat.Width = 5;
-                //config.ChallengeDetails = JsonConvert.SerializeObject(squareMat);
-                //string json = JsonConvert.SerializeObject(config);
-                ////write string to file
-                //System.IO.File.WriteAllText(@"C:\temp\SquareMatChallengeConfig.json", json);
 
                 List<string> newArgs = args.ToList();
 
@@ -62,7 +55,6 @@ namespace Rigor.ToyRobot.Console
 
                             strParams += newArgs[i] + "; ";
                         }
-
                    }
 
                     try

@@ -1,4 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+
+using Rigor.ToyRobot.Challenge.Challenges;
+using Rigor.ToyRobot.Challenge.Components;
+using Rigor.ToyRobot.Challenge.Parsers;
+using Rigor.ToyRobot.Common.Data;
+using Rigor.ToyRobot.Common.Interfaces;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,8 +21,15 @@ namespace Rigor.ToyRobot.Console.Handlers
 
         private string _configurationFilePath;
 
-        private static string SOURCE_FILE_SWITCH = "F";
+        private string _inputCommandFilePath;
 
+        private static string CONFIG_FILE_SWITCH = "C";
+
+        private static string INPUT_FILE_SWITCH = "I";
+
+        private ChallengeConfiguration _challengeConfiguration;
+
+        private IChallenge _challenge;
 
         public RunByConfigurationHandler() : base()
         {
@@ -41,11 +56,14 @@ namespace Rigor.ToyRobot.Console.Handlers
         {
             get
             {
-                var description = "Runs the Toy Robot Challenge using a pre-defined configuration." +
-                    "\nPlease ensure configuration settings file is available and set.";
+                var description = "Runs the Toy Robot Challenge using a pre-defined configuration. \n" +
+                    "Please ensure configuration settings file is available and set.\n";
 
-                var options = "/" + SOURCE_FILE_SWITCH + "\t\tProvide the full path to the configuration file.\n";
+                var options = $"[/{CONFIG_FILE_SWITCH}]\t\tProvide the full path to the configuration file\n";
 
+                options += "----\n";
+                options += $"[/{INPUT_FILE_SWITCH}]\t\tProvide the full path to the input commands file\n";
+                options += $"Example: -RunConfiguration /{CONFIG_FILE_SWITCH} {@"C:\temp\SquareMatChallengeConfig.config"} /{INPUT_FILE_SWITCH} {@"C:\temp\InputCommands.txt"}";
 
                 return description + options;
             }
@@ -109,104 +127,59 @@ namespace Rigor.ToyRobot.Console.Handlers
         {
             try
             {
-                //var itemList = _globalSettings.ItemList;
+                if(_challengeConfiguration != null)
+                {
+                    _challenge = ChallengeFactory.CreateChallenge(_challengeConfiguration.ChallengeGuid);
 
-                //var _availableConverters = VideoConverterBase.GetAvailableFileConverters();
+                    List<IRobot> robots = new List<IRobot>();
+                    foreach(RobotConfiguration robotConfiguration in _challengeConfiguration.Robots)
+                    {
+                        if(!robots.Any(x=> (x as IHaveIdentifier).Name == robotConfiguration.Name))
+                        {
+                            robots.Add(new Robot(robotConfiguration.Name, robotConfiguration.Guid));
+                        }
+                    }
 
-                //for (int i = 0; i < itemList.Count; i++)
-                //{
-                //    int entry = i + 1;
+                    _challenge.Initialize(robots, _challengeConfiguration.ChallengeMatDetails, _challengeConfiguration.IsSinglePlayer);
+                    _challenge.CommandExecuted += _challenge_CommandExecuted;
+                    SetMessage(this, new EventArgs.HandlerEventArgs(this, "Toy Robot Challenge initialized...", false));
 
-                //    ConfigurationFileStore c = itemList[i];
-                //    using (VideoExportConfiguration vec = new VideoExportConfiguration())
-                //    {
-                //        vec.SetConfig(c);
+                    if(!String.IsNullOrEmpty(_inputCommandFilePath))
+                    {
+                        FileInfo fileInfo = new FileInfo(_inputCommandFilePath);
 
-                //        vec.CameraGuid = itemList[i].CameraGuid;
-                //        vec.ConverterGuid = itemList[i].ConverterGuid != Guid.Empty ? itemList[i].ConverterGuid : _globalSettings.ConverterGuid;
-                //        vec.TimingInfo = itemList[i].TimingInfo;
-                //        vec.OnReportProgress += OnReportProgessChanged;
-                //        vec.OnOperationCompleted += OnOperationCompleted;
-                //        vec.ExportFailed += OnExportFailed;
-
-                //        Log.Info(913, "Creating camera from GUID -> {0}", true, c.CameraGuid);
-
-                //        Camera camera = _scDriver.GetCameraFromGuid(c.CameraGuid);
-
-                //        Log.Info(913, "Selected Camera -> {0} ({1})", false, camera?.Name, camera?.Guid);
-
-                //        if (camera == null)
-                //        {
-                //            SetMessage(this, new ConsoleHandlerEventArgs(this, "\tERROR: Invalid Camera found at entry " + entry, false));
-                //        }
-                //        else
-                //        {
-                //            Log.Info(913, "Initialising VideoExportConfiguration object", true);
-
-                //            vec.Initialise(camera, _scDriver);
-
-                //            var selectedConverter = _availableConverters.Where(x => x.ConverterGUID == vec.ConverterGuid).FirstOrDefault();
-                //            vec.SelectedConverter = selectedConverter != null ? selectedConverter : _availableConverters[0];
-
-                //            Log.Info(913, "SelectedConverter -> {0}", true, vec.SelectedConverter.ToString());
-
-                //            SetMessage(this, new ConsoleHandlerEventArgs(this, String.Format("\tExporting from Camera {0} - {1}. Converter: {2}", entry, camera.Name, vec.SelectedConverter.ToString()), false));
-
-                //            vec.StartExport();
-
-                //            Log.Info(913, "Export Started", false);
-
-                //            while (vec.IsExportRunning | vec.IsMP4ConverterRunning)
-                //            {
-                //                System.Threading.Thread.Sleep(1000);
-                //            }
-
-                //            itemList[i] = new ConfigurationFileStore(vec);
-                //        }
-
-                //    }
-
-                //    System.Threading.Thread.Sleep(1000);
-
-                //}
-
-                ////save the updated file: 
-                //try
-                //{
-                //    Log.Info(913, "Setting the last exported frame time in config file.", true);
-
-                //    _globalSettings.ItemList = itemList;
-
-                //    ConfigurationFileStore.SaveState(_configurationFilePath, _globalSettings, _scDriver);
-
-                //    Log.Info(913, "Changes applied", true);
-                //}
-                //catch (Exception ex)
-                //{
-
-                //    _errMsg = String.Format("Unable to save the configuration due to an error. {0}", ex.Message);
-
-                //    SetMessage(this, new ConsoleHandlerEventArgs(this, _errMsg, false));
-
-                //    Log.Error(913, ex, _errMsg);
-                //}
+                        if(fileInfo.Exists)
+                        {
+                            ICommandFileParser parser = CommandFileParserFactory.CreateParser(fileInfo.Extension);
+                            List<List<IRobotCommand>> robotCommands = parser.ParseFile(_inputCommandFilePath);
+                            foreach(List<IRobotCommand> commandlist in robotCommands)
+                            {
+                                _challenge.ExecuteCommands(commandlist);
+                            }
+                        }
+                    }
+                }
+                
             }
             catch (Exception ex)
             {
 
-                //_errMsg = String.Format("Unable to process the configuration due to an error. {0}", ex.Message);
-
-                //Log.Error(913, ex, _errMsg);
-
-                //throw new Exception(_errMsg);
+                _errMsg = String.Format("Unable to process the configuration due to an error. {0}", ex.Message);
+                throw new Exception(_errMsg);
 
             }
         }
 
-        
+        private void _challenge_CommandExecuted(object sender, string e)
+        {
+            SetMessage(this, new EventArgs.HandlerEventArgs(this, e, false));
+
+        }
 
 
-       
+
+
+
         /// <summary>
         /// Processes the parameters.
         /// </summary>
@@ -237,30 +210,45 @@ namespace Rigor.ToyRobot.Console.Handlers
                     throw new Exception(_errMsg);
                 }
 
-                string str = "";
+                string commandParams = "";
                 for (int i = 0; i < CommandParams.Length; i++)
                 {
-                    str += CommandParams[i] + " ";
+                    commandParams += CommandParams[i] + " ";
                 }
 
 
-                string[] spl = str.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                string[] commandParamsArray = commandParams.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
 
-                for (int i = 0; i < spl.Length; i++)
+                for (int i = 0; i < commandParamsArray.Length; i++)
                 {
                     try
                     {
 
-                        if (spl[i].ToUpper().StartsWith(SOURCE_FILE_SWITCH) && spl[i].ToString().ElementAt(1) == ' ')
+                        if (commandParamsArray[i].ToUpper().StartsWith(CONFIG_FILE_SWITCH) && commandParamsArray[i].ToString().ElementAt(1) == ' ')
                         {
-                            _configurationFilePath = spl[i].Remove(0, SOURCE_FILE_SWITCH.Length);
+                            _configurationFilePath = commandParamsArray[i].Remove(0, CONFIG_FILE_SWITCH.Length);
 
 
                             FileInfo sFileInfo = new FileInfo(_configurationFilePath);
 
                             if (!sFileInfo.Exists)
                             {
-                                _errMsg = "Invalid source file name provided: " + _configurationFilePath;
+                                _errMsg = "Invalid configuration file name provided: " + _configurationFilePath;
+
+                                throw new Exception(_errMsg);
+                            }
+                        }
+
+                        if (commandParamsArray[i].ToUpper().StartsWith(INPUT_FILE_SWITCH) && commandParamsArray[i].ToString().ElementAt(1) == ' ')
+                        {
+                            _inputCommandFilePath = commandParamsArray[i].Remove(0, INPUT_FILE_SWITCH.Length);
+
+
+                            FileInfo sFileInfo = new FileInfo(_inputCommandFilePath);
+
+                            if (!sFileInfo.Exists)
+                            {
+                                _errMsg = "Invalid input commmands file name provided: " + _configurationFilePath;
 
                                 throw new Exception(_errMsg);
                             }
@@ -277,23 +265,12 @@ namespace Rigor.ToyRobot.Console.Handlers
                 SetMessage(this, new EventArgs.HandlerEventArgs(this, "Checking config file...", false));
 
 
-                //pass = ConfigurationFileStore.RecallFile(_configurationFilePath, out _globalSettings);
+                _challengeConfiguration = JsonConvert.DeserializeObject<ChallengeConfiguration>(File.ReadAllText(_configurationFilePath));
 
-                //if (!pass)
-                //{
-                //    throw new Exception("Unable to parse the given file due to an error");
-                //}
-
-                //if (_globalSettings.ItemList == null)
-                //{
-                //    throw new Exception("Invalid configuration - Camera entity list not found.");
-                //}
-                //else if (_globalSettings.ItemList.Count == 0)
-                //{
-                //    throw new Exception("Invalid configuration - Camera entity list is empty.");
-                //}
-
-                
+                if(_challengeConfiguration == null)
+                {
+                    throw new Exception("Unable to parse the given configuration file due to an error");
+                }
             }
             catch (Exception ex)
             {

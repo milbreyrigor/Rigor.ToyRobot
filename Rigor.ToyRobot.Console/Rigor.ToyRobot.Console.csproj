@@ -59,6 +59,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Rigor.ToyRobot.Challenge\Rigor.ToyRobot.Challenge.csproj">
+      <Project>{19249856-14EB-43F3-9509-824A944D0C40}</Project>
+      <Name>Rigor.ToyRobot.Challenge</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Rigor.ToyRobot.Common\Rigor.ToyRobot.Common.csproj">
       <Project>{0C92E06F-0166-4E8E-B460-7FD6F9F9C62A}</Project>
       <Name>Rigor.ToyRobot.Common</Name>

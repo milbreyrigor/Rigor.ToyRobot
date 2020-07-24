@@ -1,4 +1,7 @@
-﻿using Rigor.ToyRobot.Challenge.Components;
+﻿using Newtonsoft.Json;
+
+using Rigor.ToyRobot.Challenge.Components;
+using Rigor.ToyRobot.Common.Data;
 using Rigor.ToyRobot.Common.Interfaces;
 
 using System;
@@ -16,6 +19,8 @@ namespace Rigor.ToyRobot.Challenge.Challenges
         private IMat mat;
         private bool isSinglePlayer;
         private IRobot activeRobot;
+
+        public event EventHandler<string> CommandExecuted;
 
         public IList<IRobot> Robots
         {
@@ -53,18 +58,37 @@ namespace Rigor.ToyRobot.Challenge.Challenges
             }
         }
 
-        public SquareCardMatChallenge(bool isSinglePlayer=true)
+        public SquareCardMatChallenge()
         {
-            mat = new SquareCardMat();
-            this.isSinglePlayer = isSinglePlayer;
         }
 
-        public void Initialize(IList<IRobot> robots)
+        public void Initialize(IList<IRobot> robots, string matDetails, bool isSinglePlayer= true)
         {
+            if(!String.IsNullOrEmpty(matDetails))
+            {
+                SquareMatConfiguration squareMatConfiguration = JsonConvert.DeserializeObject<SquareMatConfiguration>(matDetails);
+
+                if(squareMatConfiguration != null)
+                {
+                    mat = new SquareCardMat(squareMatConfiguration.Width);
+                }
+            }
+
+            if(mat == null)
+            {
+                mat = new SquareCardMat();
+            }
+
+            this.isSinglePlayer = isSinglePlayer;
 
             if (robots != null && robots.Count > 0)
             {
                 this.robots = robots;
+
+                foreach(IRobot robot in Robots)
+                {
+                    robot.SetMat(mat);
+                }
 
                 if (IsSinglePlayer)
                 {
@@ -78,6 +102,20 @@ namespace Rigor.ToyRobot.Challenge.Challenges
             if (robots != null && robots.Count > 0)
             {
                 activeRobot = robots.Where(x => (x as IHaveIdentifier).Guid == guid).FirstOrDefault();
+            }
+        }
+
+        private void OnCommandExecuted(object sender, string message)
+        {
+            CommandExecuted?.Invoke(sender, message);
+        }
+
+        public void ExecuteCommands(List<IRobotCommand> commands)
+        {
+            foreach(IRobotCommand command in commands)
+            {
+                string message = command.Execute(ActiveRobot);
+                OnCommandExecuted(this, message);
             }
         }
     }

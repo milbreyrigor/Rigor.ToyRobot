@@ -46,8 +46,16 @@
   <ItemGroup>
     <Compile Include="Challenges\ChallengeFactory.cs" />
     <Compile Include="Challenges\SquareCardMatChallenge.cs" />
+    <Compile Include="Commands\CommandFactory.cs" />
+    <Compile Include="Commands\LeftCommand.cs" />
+    <Compile Include="Commands\MoveCommand.cs" />
+    <Compile Include="Commands\PlaceCommand.cs" />
+    <Compile Include="Commands\ReportCommand.cs" />
+    <Compile Include="Commands\RightCommand.cs" />
     <Compile Include="Components\Robot.cs" />
     <Compile Include="Components\SquareCardMat.cs" />
+    <Compile Include="Parsers\CommandFileParserFactory.cs" />
+    <Compile Include="Parsers\TextFileParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Strategies\EastRotateStrategy.cs" />
     <Compile Include="Strategies\MoveRightStrategy.cs" />
@@ -69,5 +77,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -11,7 +11,7 @@ namespace Rigor.ToyRobot.Challenge.Challenges
 {
     public static class ChallengeFactory
     {
-        public static IChallenge CreateRotateStrategy(Guid guid)
+        public static IChallenge CreateChallenge(Guid guid)
         {
             IChallenge challenge = GetChallenges().FirstOrDefault(x => (x as IHaveIdentifier).Guid == guid);
             return challenge;
@@ -24,9 +24,9 @@ namespace Rigor.ToyRobot.Challenge.Challenges
             try
             {
                 var type = typeof(IChallenge);
-                foreach (IChallenge strategy in Assembly.GetExecutingAssembly().GetTypes().Where(c => type.IsAssignableFrom(c)).Select(c => Activator.CreateInstance(c)))
+                foreach (IChallenge challenge in Assembly.GetExecutingAssembly().GetTypes().Where(c => type.IsAssignableFrom(c)).Select(c => Activator.CreateInstance(c)))
                 {
-                    result.Add(strategy);
+                    result.Add(challenge);
                 }
             }
 

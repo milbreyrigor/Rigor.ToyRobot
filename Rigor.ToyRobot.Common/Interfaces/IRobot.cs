@@ -16,6 +16,8 @@ namespace Rigor.ToyRobot.Common.Interfaces
 
         IList<IRotateStrategy> RotateStrategies { get; }
 
+        void SetMat(IMat mat);
+
         void SetPosition(MatPosition position);
 
         void Move();
@@ -23,5 +25,7 @@ namespace Rigor.ToyRobot.Common.Interfaces
         void Left();
 
         void Right();
+
+        string Report();
     }
 }

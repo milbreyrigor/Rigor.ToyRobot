@@ -11,6 +11,10 @@ namespace Rigor.ToyRobot.Common.Data
     {
         public Guid ChallengeGuid { get; set; }
 
-        public string ChallengeDetails { get; set; }
+        public string ChallengeMatDetails { get; set; }
+
+        public bool IsSinglePlayer { get; set; }
+
+        public List<RobotConfiguration> Robots { get; set; }
     }
 }
