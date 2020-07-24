@@ -11,6 +11,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rigor.ToyRobot.Test", "Rigo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rigor.ToyRobot.Console", "Rigor.ToyRobot.Console\Rigor.ToyRobot.Console.csproj", "{E3F251B3-70B8-452C-977E-80416324CC12}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestData", "TestData", "{EA2675F1-82B3-458E-8B01-5BD6C361E767}"
+	ProjectSection(SolutionItems) = preProject
+		InputCommands.txt = InputCommands.txt
+		SquareMatChallengeConfig.json = SquareMatChallengeConfig.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

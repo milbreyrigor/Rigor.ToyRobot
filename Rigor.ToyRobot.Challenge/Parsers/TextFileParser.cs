@@ -21,10 +21,7 @@ namespace Rigor.ToyRobot.Challenge.Parsers
 
             try
             {
-                List<string> listOfCommands = File.ReadLines(filePath)
-                    .SkipWhile(line => !line.StartsWith(CommandNames.Place.Name))
-                    .Where(line => !String.IsNullOrEmpty(line))
-                    .ToList();
+                List<string> listOfCommands = GetCommandLinesFromFile(filePath);
 
                 List<IRobotCommand> commandGroup = null;
                 int counter = 0;
@@ -40,32 +37,15 @@ namespace Rigor.ToyRobot.Challenge.Parsers
                             commandGroup = null;
                         }
 
-                        string[] splitCmd = command.Split(' ');
+                        IRobotCommand placeCommand = GetPlaceRobotCommand(command);
 
-                        if (splitCmd != null && splitCmd.Length == 2)
+                        if(placeCommand !=null)
                         {
-                            string[] splitParams = splitCmd[1].Split(',');
-
-                            if (splitParams != null && splitParams.Length == 3)
-                            {
-                                uint x = 0;
-                                uint y = 0;
-
-                                if (uint.TryParse(splitParams[0], out x) && uint.TryParse(splitParams[1], out y))
-                                {
-                                    Direction direction = Directions.GetAll().Where(d => d.Name == splitParams[2].ToUpper()).FirstOrDefault();
-
-                                    if (direction != null)
-                                    {
-                                        commandGroup = new List<IRobotCommand>();
-                                        PlaceCommand placeCommand = new PlaceCommand();
-                                        placeCommand.Position = new Common.Data.MatPosition(new Common.Data.MatLocation(x, y), direction);
-                                        commandGroup.Add(placeCommand);
-                                        continue;
-                                    }
-                                }
-                            }
+                            commandGroup = new List<IRobotCommand>();
+                            commandGroup.Add(placeCommand);
+                            continue;
                         }
+                        
                     }
 
                     if(commandGroup != null)
@@ -91,6 +71,66 @@ namespace Rigor.ToyRobot.Challenge.Parsers
             }
            
             return commands;
+        }
+
+        public List<string> GetCommandLinesFromFile(string filePath)
+        {
+            List<string> commands = new List<string>();
+
+            try
+            {
+                commands = File.ReadLines(filePath)
+                    .SkipWhile(line => !line.StartsWith(CommandNames.Place.Name))
+                    .Where(line => !String.IsNullOrEmpty(line))
+                    .ToList();
+            }
+            catch
+            {
+
+            }
+
+            return commands;
+        }
+
+
+        public IRobotCommand GetPlaceRobotCommand(string command)
+        {
+            IRobotCommand robotCommand = null;
+
+            try
+            {
+                string[] splitCmd = command.Split(' ');
+
+                if (splitCmd != null && splitCmd.Length == 2)
+                {
+                    string[] splitParams = splitCmd[1].Split(',');
+
+                    if (splitParams != null && splitParams.Length == 3)
+                    {
+                        uint x = 0;
+                        uint y = 0;
+
+                        if (uint.TryParse(splitParams[0], out x) && uint.TryParse(splitParams[1], out y))
+                        {
+                            Direction direction = Directions.GetAll().Where(d => d.Name == splitParams[2].ToUpper()).FirstOrDefault();
+
+                            if (direction != null)
+                            {
+                                robotCommand = new PlaceCommand()
+                                {
+                                    Position = new Common.Data.MatPosition(new Common.Data.MatLocation(x, y), direction)
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+
+            return robotCommand;
         }
     }
 }
