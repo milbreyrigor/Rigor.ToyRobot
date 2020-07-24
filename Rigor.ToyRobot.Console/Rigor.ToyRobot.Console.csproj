@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{19249856-14EB-43F3-9509-824A944D0C40}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Rigor.ToyRobot.Challenge</RootNamespace>
-    <AssemblyName>Rigor.ToyRobot.Challenge</AssemblyName>
+    <ProjectGuid>{E3F251B3-70B8-452C-977E-80416324CC12}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Rigor.ToyRobot.Console</RootNamespace>
+    <AssemblyName>Rigor.ToyRobot.Console</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -44,30 +46,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Challenges\ChallengeFactory.cs" />
-    <Compile Include="Challenges\SquareCardMatChallenge.cs" />
-    <Compile Include="Components\Robot.cs" />
-    <Compile Include="Components\SquareCardMat.cs" />
+    <Compile Include="EventArgs\HandlerEventArgs.cs" />
+    <Compile Include="Handlers\HandlerBase.cs" />
+    <Compile Include="Handlers\HandlerBaseFactory.cs" />
+    <Compile Include="Handlers\HelpHandler.cs" />
+    <Compile Include="Handlers\RunByConfigurationHandler.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Strategies\EastRotateStrategy.cs" />
-    <Compile Include="Strategies\MoveRightStrategy.cs" />
-    <Compile Include="Strategies\MoveDownStrategy.cs" />
-    <Compile Include="Strategies\MoveLeftStrategy.cs" />
-    <Compile Include="Strategies\RotateStrategyFactory.cs" />
-    <Compile Include="Strategies\MoveStrategyFactory.cs" />
-    <Compile Include="Strategies\MoveUpStrategy.cs" />
-    <Compile Include="Strategies\NorthRotateStrategy.cs" />
-    <Compile Include="Strategies\SouthRotateStrategy.cs" />
-    <Compile Include="Strategies\WestRotateStrategy.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rigor.ToyRobot.Common\Rigor.ToyRobot.Common.csproj">
       <Project>{0C92E06F-0166-4E8E-B460-7FD6F9F9C62A}</Project>
       <Name>Rigor.ToyRobot.Common</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

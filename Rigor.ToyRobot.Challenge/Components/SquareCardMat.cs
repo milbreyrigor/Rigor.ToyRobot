@@ -11,13 +11,40 @@ namespace Rigor.ToyRobot.Challenge.Components
 {
     public class SquareCardMat : IMat, IHaveIdentifier
     {
-        public uint Height => 5;
+        private uint height = 5;
+        private uint width = 5;
 
-        public uint Width => 5;
+        public uint Height
+        {
+            get
+            {
+                return height;
+            }
+            
+        }
+
+        public uint Width
+        {
+            get
+            {
+                return width;
+            }
+        }
 
         public string Name => "Square Card";
 
         public Guid Guid => new Guid("{6933B37C-8109-4F3E-A262-DCDF44AF55E7}");
+
+        public SquareCardMat()
+        {
+
+        }
+
+        public SquareCardMat(uint width)
+        {
+            this.height = width;
+            this.width = width;
+        }
 
         public bool IsValidPosition(MatLocation position)
         {

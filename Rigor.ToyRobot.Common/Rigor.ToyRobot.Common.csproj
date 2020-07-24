@@ -46,8 +46,10 @@
     <Compile Include="Common\Direction.cs" />
     <Compile Include="Common\Directions.cs" />
     <Compile Include="Common\Enumeration.cs" />
+    <Compile Include="Data\ChallengeConfiguration.cs" />
     <Compile Include="Data\MatPosition.cs" />
     <Compile Include="Data\MatLocation.cs" />
+    <Compile Include="Data\SquareMatConfiguration.cs" />
     <Compile Include="Interfaces\IChallenge.cs" />
     <Compile Include="Interfaces\IHaveIdentifier.cs" />
     <Compile Include="Interfaces\IMat.cs" />
