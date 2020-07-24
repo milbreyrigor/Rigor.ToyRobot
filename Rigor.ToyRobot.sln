@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.txt = README.txt
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Rigor.ToyRobot.Console.Setup", "Rigor.ToyRobot.Console.Setup\Rigor.ToyRobot.Console.Setup.vdproj", "{81AE2E7C-F660-41D5-A681-9EE78F786C5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,8 @@ Global
 		{E3F251B3-70B8-452C-977E-80416324CC12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3F251B3-70B8-452C-977E-80416324CC12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3F251B3-70B8-452C-977E-80416324CC12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81AE2E7C-F660-41D5-A681-9EE78F786C5B}.Debug|Any CPU.ActiveCfg = Debug
+		{81AE2E7C-F660-41D5-A681-9EE78F786C5B}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

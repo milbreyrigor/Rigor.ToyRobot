@@ -5,3 +5,6 @@ To run the Toy Robot Challenge:
 3. Run the console application with the following command line arguments:
 
 -RunConfiguration /C "<file location>\SquareMatChallengeConfig.json"  /I "<file location>\InputCommands.txt"
+
+
+If using Windows installer, execute the Rigor.ToyRobot.Console.exe with the same command line arguments. Sample files can be found in the installation folder.
