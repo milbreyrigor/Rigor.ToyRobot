@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleWriter.cs" />
     <Compile Include="EventArgs\HandlerEventArgs.cs" />
     <Compile Include="Handlers\HandlerBase.cs" />
     <Compile Include="Handlers\HandlerBaseFactory.cs" />

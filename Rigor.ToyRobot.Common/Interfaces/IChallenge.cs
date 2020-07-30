@@ -5,8 +5,6 @@ namespace Rigor.ToyRobot.Common.Interfaces
 {
     public interface IChallenge
     {
-        event EventHandler<string> CommandExecuted;
-
         IList<IRobot> Robots { get; }
 
         IRobot ActiveRobot { get; }
@@ -19,6 +17,5 @@ namespace Rigor.ToyRobot.Common.Interfaces
 
         void SetActiveRobot(Guid guid);
 
-        void ExecuteCommands(List<IRobotCommand> commands);
     }
 }

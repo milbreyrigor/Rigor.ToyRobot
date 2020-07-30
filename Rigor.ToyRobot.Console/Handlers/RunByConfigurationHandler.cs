@@ -3,6 +3,7 @@
 using Rigor.ToyRobot.Challenge.Challenges;
 using Rigor.ToyRobot.Challenge.Components;
 using Rigor.ToyRobot.Challenge.Parsers;
+using Rigor.ToyRobot.Challenge.Services;
 using Rigor.ToyRobot.Common.Data;
 using Rigor.ToyRobot.Common.Interfaces;
 
@@ -105,7 +106,7 @@ namespace Rigor.ToyRobot.Console.Handlers
             try
             {
                 ProcessParams();
-                ProcessFile();
+                ProcessInputFile();
 
             }
             catch (Exception e)
@@ -120,44 +121,46 @@ namespace Rigor.ToyRobot.Console.Handlers
 
         #region Private functions
 
-        /// <summary>
-        /// Processes the Video configuration XML file.
-        /// </summary>        
-        private void ProcessFile()
+     
+        private void ProcessInputFile()
         {
             try
             {
                 if(_challengeConfiguration != null)
                 {
-                    _challenge = ChallengeFactory.CreateChallenge(_challengeConfiguration.ChallengeGuid);
-
-                    List<IRobot> robots = new List<IRobot>();
-                    foreach(RobotConfiguration robotConfiguration in _challengeConfiguration.Robots)
+                    if(SharedServices.HasService(typeof(ChallengeInitializationService)))
                     {
-                        if(!robots.Any(x=> (x as IHaveIdentifier).Name == robotConfiguration.Name))
+                        _challenge = SharedServices.GetService<ChallengeInitializationService>().InitializeChallenge(_challengeConfiguration);
+                        OnReportMessageSet(this, new EventArgs.HandlerEventArgs(this, "Toy Robot Challenge initialized...", false));
+
+                        if (!String.IsNullOrEmpty(_inputCommandFilePath))
                         {
-                            robots.Add(new Robot(robotConfiguration.Name, robotConfiguration.Guid));
-                        }
-                    }
+                            List<string> stringCommands = null;
 
-                    _challenge.Initialize(robots, _challengeConfiguration.ChallengeMatDetails, _challengeConfiguration.IsSinglePlayer);
-                    _challenge.CommandExecuted += _challenge_CommandExecuted;
-                    SetMessage(this, new EventArgs.HandlerEventArgs(this, "Toy Robot Challenge initialized...", false));
-
-                    if(!String.IsNullOrEmpty(_inputCommandFilePath))
-                    {
-                        FileInfo fileInfo = new FileInfo(_inputCommandFilePath);
-
-                        if(fileInfo.Exists)
-                        {
-                            ICommandFileParser parser = CommandFileParserFactory.CreateParser(fileInfo.Extension);
-                            List<List<IRobotCommand>> robotCommands = parser.ParseFile(_inputCommandFilePath);
-                            foreach(List<IRobotCommand> commandlist in robotCommands)
+                            if(SharedServices.HasService(typeof(CommandParsingService)))
                             {
-                                _challenge.ExecuteCommands(commandlist);
+                                stringCommands = SharedServices.GetService<CommandParsingService>().ParseCommandFile(_inputCommandFilePath);
+
+                                if(stringCommands != null && SharedServices.HasService(typeof(CommandConversionService)))
+                                {
+                                    List<List<IRobotCommand>> robotCommands = SharedServices.GetService<CommandConversionService>().ConvertStringCommands(stringCommands);
+
+                                    if(robotCommands != null && robotCommands.Count > 0 && SharedServices.HasService(typeof(CommandExecutionService)))
+                                    {
+                                        SharedServices.GetService<CommandExecutionService>().CommandExecuted += CommandExecutionService_CommandExecuted;
+
+                                        foreach (List<IRobotCommand> commandlist in robotCommands)
+                                        {
+                                            SharedServices.GetService<CommandExecutionService>().ExecuteCommands(_challenge.ActiveRobot, commandlist);
+                                        }
+                                    }
+                                }
                             }
+                            
                         }
                     }
+
+                    
                 }
                 
             }
@@ -170,9 +173,9 @@ namespace Rigor.ToyRobot.Console.Handlers
             }
         }
 
-        private void _challenge_CommandExecuted(object sender, string e)
+        private void CommandExecutionService_CommandExecuted(object sender, string e)
         {
-            SetMessage(this, new EventArgs.HandlerEventArgs(this, e, false));
+            OnReportMessageSet(this, new EventArgs.HandlerEventArgs(this, e, false));
 
         }
 
@@ -262,7 +265,7 @@ namespace Rigor.ToyRobot.Console.Handlers
                     }
                 }
 
-                SetMessage(this, new EventArgs.HandlerEventArgs(this, "Checking config file...", false));
+                OnReportMessageSet(this, new EventArgs.HandlerEventArgs(this, "Checking config file...", false));
 
 
                 _challengeConfiguration = JsonConvert.DeserializeObject<ChallengeConfiguration>(File.ReadAllText(_configurationFilePath));

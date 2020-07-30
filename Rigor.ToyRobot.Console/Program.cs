@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 
+using Rigor.ToyRobot.Challenge.Services;
 using Rigor.ToyRobot.Common.Common;
 using Rigor.ToyRobot.Common.Data;
 using Rigor.ToyRobot.Console.EventArgs;
@@ -27,7 +28,9 @@ namespace Rigor.ToyRobot.Console
 
                 List<string> newArgs = args.ToList();
 
-                _availableCommands = HandlerBase.GetAvailableCommands();
+                InitializeServices();
+
+                _availableCommands = GetAvailableCommands();
 
 
                 foreach (KeyValuePair<string, HandlerBase> c in _availableCommands.ToList())
@@ -38,7 +41,7 @@ namespace Rigor.ToyRobot.Console
                 string command = "";
                 if (newArgs.Count < 1)
                 {
-                    PrintHelp();
+                    ConsoleWriter.PrintHelp();
                 }
                 else
                 {
@@ -69,11 +72,11 @@ namespace Rigor.ToyRobot.Console
                     }
                     catch (KeyNotFoundException keyNotFoundException)
                     {
-                        WriteLine($"Error: Incompatible command received. Please try again. {keyNotFoundException.Message}");
+                        ConsoleWriter.WriteLine($"Error: Incompatible command received. Please try again. {keyNotFoundException.Message}");
                     }
                     catch (Exception e)
                     {
-                        WriteLine("An error occured in executing the function.\n" + _availableCommands[command].GetErrorMessage);
+                        ConsoleWriter.WriteLine("An error occured in executing the function.\n" + _availableCommands[command].GetErrorMessage);
                     }
 
                 }
@@ -94,73 +97,47 @@ namespace Rigor.ToyRobot.Console
 
         private static void Value_ReportMessage(object sender, HandlerEventArgs e)
         {
-            WriteLine(e.Message, e.WriteToSameLine);
+            ConsoleWriter.WriteLine(e.Message, e.WriteToSameLine);
         }
 
-        /// <summary>
-        /// Prints the help.
-        /// </summary>
-        internal static void PrintHelp(string commandToShow = null)
+        
+        internal static Dictionary<string, HandlerBase> GetAvailableCommands()
         {
-            if (commandToShow == null)
+            List<HandlerBase> cmds = new List<HandlerBase>();
+
+            Dictionary<string, HandlerBase> result = new Dictionary<string, HandlerBase>();
+
+            try
             {
-                System.Console.ForegroundColor = ConsoleColor.White;
+                cmds = HandlerBaseFactory.GetAllHandlerBases();
 
-                var name = Assembly.GetAssembly(typeof(HandlerBase)).GetName().Name.ToString();
-
-                WriteLine(String.Format("----{0}----", name));
-
-                WriteLine("");
-
-                WriteLine("Usage: (Case sensitive)");
-
-                WriteLine("");
-
-                System.Console.ResetColor();
-
-                foreach (KeyValuePair<string, HandlerBase> item in _availableCommands)
+                foreach (HandlerBase c in cmds)
                 {
-                    HandlerBase c = item.Value;
-
-                    WriteLine(c.ToString());
-                    WriteLine("");
+                    result.Add(c.CommandArgs, c);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                try
-                {
-                    HandlerBase c = _availableCommands[commandToShow];
-
-                    WriteLine(c.ToString());
-
-                    WriteLine("");
-                }
-                catch (KeyNotFoundException)
-                {
-                    WriteLine("Invalid command provided.");
-                }
             }
+
+            return result;
         }
 
-
-        /// <summary>
-        /// Writes the line.
-        /// </summary>
-        /// <param name="line">The line.</param>
-        /// <param name="toSameLine">if set to <c>true</c> [to same line].</param>
-        private static void WriteLine(string line, bool toSameLine = false)
+        internal static void InitializeServices()
         {
-            if (toSameLine)
+            try
             {
-                System.Console.Write("\r{0}", line);
+                var allGeneralServices = ServicesFactory.CreateAllServices()?.ToList();
+                allGeneralServices?.ForEach(x =>
+                {
+                    SharedServices.SetService(x, x.GetType());
+                });
             }
-            else
+
+            catch (Exception e)
             {
-
-                System.Console.WriteLine(line);
             }
-
         }
+
     }
 }

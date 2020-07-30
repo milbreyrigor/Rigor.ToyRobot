@@ -29,31 +29,9 @@ namespace Rigor.ToyRobot.Console.Handlers
 
         }
 
-        protected void SetMessage(object sender, HandlerEventArgs args)
+        protected void OnReportMessageSet(object sender, HandlerEventArgs args)
         {
             ReportMessageSet?.Invoke(sender, args);
-        }
-
-        public static Dictionary<string, HandlerBase> GetAvailableCommands()
-        {
-            List<HandlerBase> cmds = new List<HandlerBase>();
-
-            Dictionary<string, HandlerBase> result = new Dictionary<string, HandlerBase>();
-
-            try
-            {
-                cmds = HandlerBaseFactory.GetAllHandlerBases();
-
-                foreach (HandlerBase c in cmds)
-                {
-                    result.Add(c.CommandArgs, c);
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-
-            return result;
         }
 
 

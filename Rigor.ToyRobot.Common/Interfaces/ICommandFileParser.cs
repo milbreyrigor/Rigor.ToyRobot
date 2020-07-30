@@ -10,10 +10,7 @@ namespace Rigor.ToyRobot.Common.Interfaces
     {
         string FileExtension { get; }
 
-        List<List<IRobotCommand>> ParseFile(string filePath);
-
         List<string> GetCommandLinesFromFile(string filePath);
 
-        IRobotCommand GetPlaceRobotCommand(string command);
     }
 }

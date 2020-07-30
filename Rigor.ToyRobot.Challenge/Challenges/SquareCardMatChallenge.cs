@@ -20,7 +20,6 @@ namespace Rigor.ToyRobot.Challenge.Challenges
         private bool isSinglePlayer;
         private IRobot activeRobot;
 
-        public event EventHandler<string> CommandExecuted;
 
         public IList<IRobot> Robots
         {
@@ -105,18 +104,8 @@ namespace Rigor.ToyRobot.Challenge.Challenges
             }
         }
 
-        private void OnCommandExecuted(object sender, string message)
-        {
-            CommandExecuted?.Invoke(sender, message);
-        }
+       
 
-        public void ExecuteCommands(List<IRobotCommand> commands)
-        {
-            foreach(IRobotCommand command in commands)
-            {
-                string message = command.Execute(ActiveRobot);
-                OnCommandExecuted(this, message);
-            }
-        }
+       
     }
 }

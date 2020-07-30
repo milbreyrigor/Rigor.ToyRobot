@@ -104,7 +104,7 @@ namespace Rigor.ToyRobot.Console.Handlers
 
             if (_showAll)
             {
-                Program.PrintHelp();
+                ConsoleWriter.PrintHelp();
 
 
                 return;
@@ -128,7 +128,7 @@ namespace Rigor.ToyRobot.Console.Handlers
                     {
                         _commandToShow = spl[i].Remove(0, SHOW_COMMAND_HELP_SWITCH.Length).Trim();
 
-                        Program.PrintHelp(_commandToShow);
+                        ConsoleWriter.PrintHelp(_commandToShow);
 
                         isParamOk = true;
                     }
